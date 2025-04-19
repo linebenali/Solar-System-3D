@@ -147,11 +147,14 @@ function onDocumentMouseDown(event) {
       
       settings.accelerationOrbit = 0; // Stop orbital movement
 
+      // Set outline to selected planet
+      outlinePass.selectedObjects = [selectedPlanet.planet]; // Add this line
+
       // Update camera to look at the selected planet
       const planetPosition = new THREE.Vector3();
       selectedPlanet.planet.getWorldPosition(planetPosition);
       controls.target.copy(planetPosition);
-      camera.lookAt(planetPosition); // Orient the camera towards the planet
+      camera.lookAt(planetPosition);
 
       targetCameraPosition.copy(planetPosition).add(camera.position.clone().sub(planetPosition).normalize().multiplyScalar(offset));
       isMovingTowardsPlanet = true;
@@ -220,20 +223,22 @@ let zoomOutTargetPosition = new THREE.Vector3(-175, 115, 5);
 function closeInfo() {
   const info = document.getElementById('planetInfo');
   const iframe = document.querySelector('#planetInfo iframe');
-  iframe.src = ''; //  stop la vidéo
+  iframe.src = '';
   info.style.display = 'none';
   settings.accelerationOrbit = 1;
   isZoomingOut = true;
   controls.target.set(0, 0, 0);
+  outlinePass.selectedObjects = []; // Add this line
 }
 window.closeInfo = closeInfo;
 
 function closeInfoNoZoomOut() {
   const info = document.getElementById('planetInfo');
   const iframe = document.querySelector('#planetInfo iframe');
-  iframe.src = ''; //  stop aussi ici
+  iframe.src = '';
   info.style.display = 'none';
   settings.accelerationOrbit = 1;
+  outlinePass.selectedObjects = []; // Add this line
 }
 
 // ******  SUN  ******
