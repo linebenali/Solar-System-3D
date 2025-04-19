@@ -282,6 +282,7 @@ function createPlanet(planetName, size, position, tilt, texture, bump, ring, atm
   const name = planetName;
   const geometry = new THREE.SphereGeometry(size, 32, 20);
   const planet = new THREE.Mesh(geometry, material);
+  planet.userData = { name: planetName };
   const planet3d = new THREE.Object3D;
   const planetSystem = new THREE.Group();
   planetSystem.add(planet);
@@ -332,7 +333,7 @@ function createPlanet(planetName, size, position, tilt, texture, bump, ring, atm
       depthWrite: false
     })
     Atmosphere = new THREE.Mesh(atmosphereGeom, atmosphereMaterial)
-    
+    Atmosphere.userData = { name: planetName };
     Atmosphere.rotation.z = 0.41;
     planet.add(Atmosphere);
   }
@@ -367,6 +368,16 @@ function createPlanet(planetName, size, position, tilt, texture, bump, ring, atm
   return {name, planet, planet3d, Atmosphere, moons, planetSystem, Ring};
 }
 
+function showTooltip(name) {
+  const tooltip = document.getElementById('planetTooltip');
+  tooltip.textContent = name;
+  tooltip.style.display = 'block';
+}
+
+function hideTooltip() {
+  const tooltip = document.getElementById('planetTooltip');
+  tooltip.style.display = 'none';
+}
 
 // ******  LOADING OBJECTS METHOD  ******
 function loadObject(path, position, scale, callback) {
@@ -758,25 +769,26 @@ asteroids.forEach(asteroid => {
 // ****** OUTLINES ON PLANETS ******
 raycaster.setFromCamera(mouse, camera);
 
-// Check for intersections
-var intersects = raycaster.intersectObjects(raycastTargets);
 
-// Reset all outlines
-outlinePass.selectedObjects = [];
 
-if (intersects.length > 0) {
-  const intersectedObject = intersects[0].object;
+raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(raycastTargets);
+  // **********************Reset all outlines
+  outlinePass.selectedObjects = [];
 
-  // If the intersected object is an atmosphere, find the corresponding planet
-  if (intersectedObject === earth.Atmosphere) {
-    outlinePass.selectedObjects = [earth.planet];
-  } else if (intersectedObject === venus.Atmosphere) {
-    outlinePass.selectedObjects = [venus.planet];
+  if (intersects.length > 0) {
+    const obj = intersects[0].object;
+    const planetName = obj.userData?.name;
+    if(planetName) {
+      showTooltip(planetName);
+      // Positionnement du tooltip
+      const tooltip = document.getElementById('planetTooltip');
+      tooltip.style.left = `${(mouse.x * 0.5 + 0.5) * window.innerWidth + 15}px`;
+      tooltip.style.top = `${(0.5 - mouse.y * 0.5) * window.innerHeight + 15}px`;
+    }
   } else {
-    // For other planets, outline the intersected object itself
-    outlinePass.selectedObjects = [intersectedObject];
+    hideTooltip();
   }
-}
 // ******  ZOOM IN/OUT  ******
 if (isMovingTowardsPlanet) {
   // Smoothly move the camera towards the target position
