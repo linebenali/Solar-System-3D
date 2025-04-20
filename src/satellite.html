@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Satellite 3D</title>
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    body { margin: 0; overflow: hidden; }
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+
+<!-- navbar -->
+<div id="navbar-placeholder"></div>
+
+<!-- Import du script principal -->
+<script type="module" src="./satellite.js"></script>
+
+<!-- Charger la navbar -->
+<script>
+  fetch('/navbar.html')
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById('navbar-placeholder').innerHTML = data;
+    })
+    .catch(err => console.error('Navbar load error:', err));
+</script>
+
+</body>
+</html>

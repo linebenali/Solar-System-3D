@@ -15,8 +15,11 @@
     </style>
 </head>
 <body>
+
+    <div id="navbar-placeholder"></div>
+
     <div id="gui-container"></div>
-    <div><script type="module" src="./script.js"></script></div>
+    <div><script type="module" src="./index.js"></script></div>
     <div id="planetInfo" class="planet-info">
         <div class="planet-info-content">
             <span class="close-btn" onclick="closeInfo()">&times;</span>
@@ -27,5 +30,15 @@
         </div>
     </div>
     <div id="planetTooltip" style="position: absolute; pointer-events: none; background: rgba(0,0,0,0.7); color: white; padding: 5px 10px; border-radius: 5px; display: none;"></div>
+    
+    <!-- charger la navbar -->
+    <script>
+        fetch('navbar.html')
+          .then(response => response.text())
+          .then(data => {
+            document.getElementById('navbar-placeholder').innerHTML = data;
+          });
+      </script>
+      
 </body>
 </html>
