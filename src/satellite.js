@@ -1,6 +1,8 @@
+
+
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { TextureLoader } from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'; // Import des contrôles
 
 // Importer les textures pour le background
 import bgTexture1 from '/images/1.jpg';
@@ -11,8 +13,6 @@ import bgTexture4 from '/images/4.jpg';
 const scene = new THREE.Scene();
 
 // ****** Charger le background avec CubeTextureLoader ******
-
-// Créer une instance de CubeTextureLoader
 const cubeTextureLoader = new THREE.CubeTextureLoader();
 
 // BACKGROUND (Charger les textures de fond)
@@ -36,7 +36,7 @@ function onMouseMove(event) {
 }
 
 console.log("Create a perspective projection camera");
-var camera = new THREE.PerspectiveCamera( 45, window.innerWidth/window.innerHeight, 0.1, 1000 );
+var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.set(0, 0, 15);  // Déplacer la caméra un peu plus loin pour voir le satellite entier
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -48,6 +48,7 @@ const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
 directionalLight.position.set(1, 1, 1);
 scene.add(ambientLight, directionalLight);
 
+// Charger le modèle 3D du satellite
 const loader = new GLTFLoader();
 loader.load('/models/satellite.glb', (gltf) => {
   const satellite = gltf.scene;
@@ -63,9 +64,21 @@ loader.load('/models/satellite.glb', (gltf) => {
   console.error('Failed to load model:', error);
 });
 
+// Ajout des contrôles OrbitControls pour la caméra
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;  // Lissage des mouvements de la caméra
+controls.dampingFactor = 0.25;  // Facteur de lissage
+controls.screenSpacePanning = false; // Désactiver le déplacement de la caméra sur le plan de l'écran
+
 function animate() {
   requestAnimationFrame(animate);
+  
+  // Mise à jour des contrôles à chaque frame
+  controls.update(); // Nécessaire si enableDamping est activé
+
   renderer.render(scene, camera);
 }
 
 animate();
+
+
