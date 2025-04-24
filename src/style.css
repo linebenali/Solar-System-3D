@@ -26,13 +26,18 @@
   }
   
 
-.planet-info {
+  .planet-info {
     display: none;
     position: fixed;
-    left: 1%; 
-    top: 25%; 
-    width: 30%; 
-    z-index: 1;
+    left: 1%;
+    top: 10%;
+    width: 40%;
+    max-height: 80vh; /* Hauteur maximale */
+    z-index: 1000; /* Z-index élevé */
+    background: rgba(0, 0, 35, 0.9);
+    border: 2px solid #ffeb3b;
+    border-radius: 10px;
+    overflow-y: auto; /* Défilement si nécessaire */
 }
 
 .planet-info-content {
@@ -42,8 +47,23 @@
     box-shadow: 0px 0px 10px 3px rgba(255,255,0,0.5);
     color: white;
     font-family: 'Arial', sans-serif;
-    overflow-y: auto; /* For scrolling */
+    position: relative;
+    height: 100%;  /* Assurer que le conteneur occupe toute la hauteur de son parent */
+    overflow: hidden;  /* Supprimer le défilement */
 }
+
+.planet-info video {
+    width: 100%;
+    max-width: 640px;
+    height: auto;
+    margin-top: 15px;
+}
+
+
+
+
+
+
 
 .close-btn {
     color: lightyellow;
@@ -66,3 +86,25 @@ p {
     color: white; 
     line-height: 1.5; 
 }
+
+/* Styles pour le robot */
+spline-viewer {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 200px;
+    height: 200px;
+    z-index: 1000;
+    border: none;
+    overflow: visible;
+  }
+
+  /* Styles de base */
+body { 
+    margin: 0; 
+    overflow: hidden; 
+  }
+  
+  canvas { 
+    display: block; 
+  }

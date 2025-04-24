@@ -35,6 +35,7 @@ import uranusTexture from '/images/uranus.jpg';
 import uraRingTexture from '/images/uranus_ring.png';
 import neptuneTexture from '/images/neptune.jpg';
 import plutoTexture from '/images/plutomap.jpg';
+import iconTexture from '/images/game-icon.png';
 
 // ******  SETUP  ******
 console.log("Create the scene");
@@ -124,6 +125,14 @@ function onMouseMove(event) {
     mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
 }
 
+
+// ******  ICON GAME  ******
+const iconMaterial = new THREE.SpriteMaterial({ map: loadTexture.load(iconTexture) });
+const gameIcon = new THREE.Sprite(iconMaterial);
+gameIcon.scale.set(5, 5, 1); // taille de l’icône
+gameIcon.visible = false; // cachée par défaut
+scene.add(gameIcon);
+
 // ******  SELECT PLANET  ******
 let selectedPlanet = null;
 let isMovingTowardsPlanet = false;
@@ -161,6 +170,7 @@ function onDocumentMouseDown(event) {
     }
   }
 }
+
 
 function identifyPlanet(clickedObject) {
   // Logic to identify which planet was clicked based on the clicked object, different offset for camera distance
@@ -200,22 +210,16 @@ function identifyPlanet(clickedObject) {
 function showPlanetInfo(planet) {
   const info = document.getElementById('planetInfo');
   const name = document.getElementById('planetName');
-  const details = document.getElementById('planetDetails');
-  const iframe = document.querySelector('#planetInfo iframe');
+  const video = document.getElementById('planetVideo');
 
-  name.innerText = planet;
-  details.innerText =
-    `Radius: ${planetData[planet].radius}\n` +
-    `Tilt: ${planetData[planet].tilt}\n` +
-    `Rotation: ${planetData[planet].rotation}\n` +
-    `Orbit: ${planetData[planet].orbit}\n` +
-    `Distance: ${planetData[planet].distance}\n` +
-    `Moons: ${planetData[planet].moons}`;
-
-  iframe.src = planetData[planet].video; // ✅ Change la vidéo
-
+  name.textContent = planet;
+  video.src = `/videos/${planet.toLowerCase()}.mp4`;
+  video.load();
+  
   info.style.display = 'block';
 }
+
+
 
 let isZoomingOut = false;
 let zoomOutTargetPosition = new THREE.Vector3(-175, 115, 5);
@@ -223,23 +227,28 @@ let zoomOutTargetPosition = new THREE.Vector3(-175, 115, 5);
 // close 'x' button function
 function closeInfo() {
   const info = document.getElementById('planetInfo');
-  const iframe = document.querySelector('#planetInfo iframe');
-  iframe.src = '';
+  const video = document.getElementById('planetVideo');
+  video.pause();
+  video.currentTime = 0;
   info.style.display = 'none';
   settings.accelerationOrbit = 1;
   isZoomingOut = true;
   controls.target.set(0, 0, 0);
-  outlinePass.selectedObjects = []; 
+  outlinePass.selectedObjects = [];
 }
 window.closeInfo = closeInfo;
 
 function closeInfoNoZoomOut() {
   const info = document.getElementById('planetInfo');
-  const iframe = document.querySelector('#planetInfo iframe');
-  iframe.src = '';
-  info.style.display = 'none';
-  settings.accelerationOrbit = 1;
-  outlinePass.selectedObjects = []; 
+  const video = document.getElementById('planetVideo');
+  
+  if (info && video) { // Vérification de null
+    video.pause();
+    video.currentTime = 0;
+    info.style.display = 'none';
+    settings.accelerationOrbit = 1;
+    outlinePass.selectedObjects = [];
+  }
 }
 
 // ******  SUN  ******
@@ -558,87 +567,15 @@ const pluto = new createPlanet('Pluto', 1, 350, 57, plutoTexture)
 
   // ******  PLANETS DATA  ******
   const planetData = {
-    'Mercury': {
-      radius: '2,439.7 km',
-      tilt: '0.034°',
-      rotation: '58.6 Earth days',
-      orbit: '88 Earth days',
-      distance: '57.9 million km',
-      moons: '0',
-      video: 'https://www.youtube.com/embed/0KbZfIs1HnY'
-    },
-    'Venus': {
-      radius: '6,051.8 km',
-      tilt: '177.4°',
-      rotation: '243 Earth days',
-      orbit: '225 Earth days',
-      distance: '108.2 million km',
-      moons: '0',
-      video: 'https://www.youtube.com/embed/FW1sGpJ9Lrc'
-    },
-    'Earth': {
-      radius: '6,371 km',
-      tilt: '23.5°',
-      rotation: '24 hours',
-      orbit: '365 days',
-      distance: '150 million km',
-      moons: '1 (Moon)',
-      video: 'https://www.youtube.com/embed/IDhapt7nw4A'
-    },
-    'Mars': {
-      radius: '3,389.5 km',
-      tilt: '25.19°',
-      rotation: '1.03 Earth days',
-      orbit: '687 Earth days',
-      distance: '227.9 million km',
-      moons: '2 (Phobos and Deimos)',
-      video: 'https://www.youtube.com/embed/D8pnmwOXhoY'
-    },
-    'Jupiter': {
-      radius: '69,911 km',
-      tilt: '3.13°',
-      rotation: '9.9 hours',
-      orbit: '12 Earth years',
-      distance: '778.5 million km',
-      moons: '95 known moons (Ganymede, Callisto, Europa, Io are the 4 largest)',
-      video: 'https://www.youtube.com/embed/zMCDl1Asm_c'
-    },
-    'Saturn': {
-      radius: '58,232 km',
-      tilt: '26.73°',
-      rotation: '10.7 hours',
-      orbit: '29.5 Earth years',
-      distance: '1.4 billion km',
-      moons: '146 known moons',
-      video: 'https://www.youtube.com/embed/epZdZaEQhS0'
-    },
-    'Uranus': {
-      radius: '25,362 km',
-      tilt: '97.77°',
-      rotation: '17.2 hours',
-      orbit: '84 Earth years',
-      distance: '2.9 billion km',
-      moons: '27 known moons',
-      video: 'https://www.youtube.com/embed/m4NXbFOiOGk'
-    },
-    'Neptune': {
-      radius: '24,622 km',
-      tilt: '28.32°',
-      rotation: '16.1 hours',
-      orbit: '165 Earth years',
-      distance: '4.5 billion km',
-      moons: '14 known moons',
-      video: 'https://www.youtube.com/embed/L5i1DR4vYOI'
-    },
-    'Pluto': {
-      radius: '1,188.3 km',
-      tilt: '122.53°',
-      rotation: '6.4 Earth days',
-      orbit: '248 Earth years',
-      distance: '5.9 billion km',
-      moons: '5 (Charon, Styx, Nix, Kerberos, Hydra)',
-      video: 'https://www.youtube.com/embed/e_9d7d5e9Dw'
-    }
+    'Mercury': {},
+    'Venus': {},
+    'Earth': {},
+    'Mars': {},
+    'Jupiter': {},
+    'Saturn': {},
+    'Uranus': {},
+    'Neptune': {},
+    'Pluto': {}
   };
   
 
@@ -793,7 +730,7 @@ raycaster.setFromCamera(mouse, camera);
 // ******  ZOOM IN/OUT  ******
 if (isMovingTowardsPlanet) {
   // Smoothly move the camera towards the target position
-  camera.position.lerp(targetCameraPosition, 0.03);
+  camera.position.lerp(targetCameraPosition, 0.026);
 
   // Check if the camera is close to the target position
   if (camera.position.distanceTo(targetCameraPosition) < 1) {

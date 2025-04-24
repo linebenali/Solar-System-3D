@@ -3,11 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>Satellite 3D</title>
+  <!-- Lien vers la feuille de style externe -->
   <link rel="stylesheet" href="/style.css">
-  <style>
-    body { margin: 0; overflow: hidden; }
-    canvas { display: block; }
-  </style>
 </head>
 <body>
 
@@ -26,6 +23,10 @@
     })
     .catch(err => console.error('Navbar load error:', err));
 </script>
+
+<!-- Robot Spline -->
+<script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.82/build/spline-viewer.js"></script>
+<spline-viewer url="https://prod.spline.design/Y5gkY66DnnDGb1te/scene.splinecode"></spline-viewer>
 
 </body>
 </html>
